@@ -14,12 +14,10 @@ k = (24 * E * I) / (L**3)  # static stiffness for each floor
 # Natural frequencies of the original structure without absorbers
 natural_frequencies = np.array([3.3933, 9.5078, 13.7391])
 
-# Number of absorbers and mass distribution
-#n = 1000  # number of absorbers
 
 plot_colours = ['blue', 'orange', 'green', 'red', 'purple', 'brown', 'pink', 'gray', 'olive', 'cyan', 'black']
 
-all_all_disp = []
+all_disps = []
 
 
 plt.figure(figsize=(10, 6))
@@ -31,23 +29,18 @@ plt.figure(figsize=(10, 6))
 # Damped natural frequencies in radians
 damped_natural_frequencies = np.array([3.16027156, 9.08205525, 13.51090025]) * 2 * np.pi
 
-# Initialize an empty list to store all frequency values
 frequencies = []
 
-# Define the frequency range
 start_freq = 1
 end_freq = 131
 
-# Add fine intervals around each damped natural frequency
 for freq in damped_natural_frequencies:
     fine_range = np.arange(freq - 0.3, freq + 0.3, 0.01)
     frequencies.extend(fine_range)
 
-# Add broader intervals outside the fine intervals
 outside_range = np.arange(start_freq, end_freq + 0.1, 0.1)
 frequencies.extend(outside_range)
 
-# Convert to a unique sorted array
 frequencies = np.unique(np.array(frequencies))
 frequencies.sort()
 
@@ -69,7 +62,6 @@ for idx, n in enumerate([0, 3, 6, 15, 30, 60, 150, 300, 600, 999]):
     # Tuning absorbers to match natural frequencies
     for i in range(n):
         selected_frequency = natural_frequencies[i % 3]
-        #selected_frequency = 9.5078
         absorber_k[i] = (2 * np.pi * selected_frequency)**2 * m
         r = 0.95 + (1.05 - 0.95) * np.random.rand()  # random number between 95% and 105%
         absorber_k[i] *= r
@@ -137,18 +129,10 @@ for idx, n in enumerate([0, 3, 6, 15, 30, 60, 150, 300, 600, 999]):
 
     all_disp = np.array(all_disp).T
 
-    # Plot frequency response for each floor
-    #plt.figure(figsize=(10, 6))
-
-    # Plot for each floor
-    #for i in range(N):
-
-    all_all_disp.append((all_disp[0], all_disp[1], all_disp[2], n, idx))
-
-    #plt.plot(frequencies, np.log(all_disp[floor]), label=f'{n} Absorber', color=plot_colours[idx % len(plot_colours)])
+    all_disps.append((all_disp[0], all_disp[1], all_disp[2], n, idx))
 
 for floor in range(3):
-    for item in all_all_disp:
+    for item in all_disps:
         plt.plot(frequencies, np.log(item[floor]), label=f'{item[3]} Absorber(s)', color=plot_colours[item[4] % len(plot_colours)])
 
     plt.xlabel('Frequency (Hz)')
