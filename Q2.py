@@ -27,7 +27,7 @@ plt.figure(figsize=(10, 6))
 
 
 
-
+'''
 # Damped natural frequencies in radians
 damped_natural_frequencies = np.array([3.16027156, 9.08205525, 13.51090025]) * 2 * np.pi
 
@@ -52,27 +52,29 @@ frequencies.extend(outside_range)
 # Convert to a unique sorted array
 frequencies = np.unique(np.array(frequencies))
 frequencies.sort()
+'''
+
+frequencies = np.arange(1, 130, 0.005)
 
 
 
 
 
+for idx, n in enumerate([0, 3]):
 
-for idx, n in enumerate([0, 3, 6, 15, 30, 60, 150, 300, 600, 999]):
-
-    absorber_total_mass = 0.5
+    absorber_total_mass = 1.3
     absorber_m = np.full(n, (absorber_total_mass / n) if n else 0)  # array of absorber mass
-    absorber_zeta = 0
+    absorber_zeta = 0.3
     absorber_location = np.full(n, 3)  # all absorbers located at floor 3
-    structure_zeta = 0.00001
+    structure_zeta = 0.01
 
     # Initialize absorber stiffness array
     absorber_k = np.zeros(n)
 
     # Tuning absorbers to match natural frequencies
     for i in range(n):
-        selected_frequency = natural_frequencies[i % 3]
-        #selected_frequency = 9.5078
+        #selected_frequency = natural_frequencies[i % 3]
+        selected_frequency = 3.3933
         absorber_k[i] = (2 * np.pi * selected_frequency)**2 * m
         r = 0.95 + (1.05 - 0.95) * np.random.rand()  # random number between 95% and 105%
         absorber_k[i] *= r
